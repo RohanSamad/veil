@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { DebriefResponse } from "@/lib/types";
-import { ArrowLeft, Loader2, Sparkles, CheckCircle2, XCircle, HelpCircle } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, CheckCircle2, XCircle, HelpCircle, Copy, Check } from "lucide-react";
 
 export default function DebriefPage() {
     const [action, setAction] = useState("");
@@ -13,6 +13,7 @@ export default function DebriefPage() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<DebriefResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [copiedSection, setCopiedSection] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,6 +39,16 @@ export default function DebriefPage() {
             setError("Network error. Please try again.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCopy = async (text: string, section: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedSection(section);
+            setTimeout(() => setCopiedSection(null), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
         }
     };
 
@@ -121,8 +132,8 @@ export default function DebriefPage() {
                                                 type="button"
                                                 onClick={() => setMatch(opt.val as any)}
                                                 className={`px-8 py-4 rounded-xl border transition-all flex items-center gap-3 ${match === opt.val
-                                                        ? "bg-[#1F2F33] border-[#1F2F33] text-[#F7F8F5] shadow-lg scale-105"
-                                                        : "bg-white border-[#3A5A5B]/10 text-[#3A5A5B] hover:bg-[#F7F8F5]"
+                                                    ? "bg-[#1F2F33] border-[#1F2F33] text-[#F7F8F5] shadow-lg scale-105"
+                                                    : "bg-white border-[#3A5A5B]/10 text-[#3A5A5B] hover:bg-[#F7F8F5]"
                                                     }`}
                                             >
                                                 <opt.icon className="w-4 h-4" />
@@ -168,21 +179,47 @@ export default function DebriefPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#3A5A5B]/10 border border-[#3A5A5B]/10 rounded-3xl overflow-hidden shadow-sm">
 
                                 {/* 1. The Lesson */}
-                                <div className="bg-[#F7F8F5] p-8 md:p-12 md:col-span-2">
-                                    <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest mb-6">
-                                        The Lesson
-                                    </h3>
+                                <div className="bg-[#F7F8F5] p-8 md:p-12 md:col-span-2 relative group">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest">
+                                            The Lesson
+                                        </h3>
+                                        <button
+                                            onClick={() => handleCopy(result.lesson_text, 'lesson')}
+                                            className="p-2 rounded-lg hover:bg-[#E1E6D8] transition-colors flex items-center gap-2 text-xs font-medium text-[#3A5A5B]"
+                                            title="Copy to clipboard"
+                                        >
+                                            {copiedSection === 'lesson' ? (
+                                                <><Check className="w-4 h-4 text-green-600" /><span className="text-green-600">Copied!</span></>
+                                            ) : (
+                                                <><Copy className="w-4 h-4" /><span className="opacity-0 group-hover:opacity-100 transition-opacity">Copy</span></>
+                                            )}
+                                        </button>
+                                    </div>
                                     <p className="text-2xl leading-relaxed text-[#1F2F33] font-serif italic max-w-2xl mx-auto text-center">
                                         "{result.lesson_text}"
                                     </p>
                                 </div>
 
                                 {/* 2. Next Step */}
-                                <div className="bg-[#1F2F33] p-8 md:p-12 md:col-span-2 text-[#F7F8F5] text-center">
-                                    <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest mb-6 flex items-center justify-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-[#9FB3A1]"></span>
-                                        Next Sovereign Move
-                                    </h3>
+                                <div className="bg-[#1F2F33] p-8 md:p-12 md:col-span-2 text-[#F7F8F5] text-center relative group">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest flex items-center gap-2 ml-auto mr-auto">
+                                            <span className="w-2 h-2 rounded-full bg-[#9FB3A1]"></span>
+                                            Next Sovereign Move
+                                        </h3>
+                                        <button
+                                            onClick={() => handleCopy(result.next_step_text, 'nextstep')}
+                                            className="p-2 rounded-lg hover:bg-[#3A5A5B] transition-colors flex items-center gap-2 text-xs font-medium text-[#F7F8F5] absolute right-8 top-8"
+                                            title="Copy to clipboard"
+                                        >
+                                            {copiedSection === 'nextstep' ? (
+                                                <><Check className="w-4 h-4 text-green-400" /><span className="text-green-400">Copied!</span></>
+                                            ) : (
+                                                <><Copy className="w-4 h-4" /><span className="opacity-0 group-hover:opacity-100 transition-opacity">Copy</span></>
+                                            )}
+                                        </button>
+                                    </div>
                                     <p className="text-xl md:text-2xl font-light leading-relaxed">
                                         {result.next_step_text}
                                     </p>
@@ -192,7 +229,7 @@ export default function DebriefPage() {
                             <div className="flex justify-center pt-8">
                                 <button
                                     onClick={() => setResult(null)}
-              className="group relative px-8 py-4 bg-[#1F2F33] text-[#F7F8F5] text-sm font-medium tracking-widest uppercase transition-all hover:bg-[#3A5A5B] shadow-lg shadow-[#1F2F33]/10"
+                                    className="group relative px-8 py-4 bg-[#1F2F33] text-[#F7F8F5] text-sm font-medium tracking-widest uppercase transition-all hover:bg-[#3A5A5B] shadow-lg shadow-[#1F2F33]/10"
                                 >
                                     Log New Debrief
                                 </button>

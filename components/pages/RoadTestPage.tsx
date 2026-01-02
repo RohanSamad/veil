@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { RoadTestResponse } from "@/lib/types";
-import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Copy, Check } from "lucide-react";
 
 export default function RoadTestPage() {
     const [message, setMessage] = useState("");
@@ -16,6 +16,7 @@ export default function RoadTestPage() {
     const [result, setResult] = useState<RoadTestResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [remaining, setRemaining] = useState<number | null>(null);
+    const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -77,6 +78,16 @@ export default function RoadTestPage() {
                 return "bg-red-100/50 border-red-400 text-[#1F2F33]"; // Red
             default:
                 return "bg-[#E1E6D8] border-[#3A5A5B]/20 text-[#3A5A5B]"; // Neutral
+        }
+    };
+
+    const handleCopy = async (text: string, index: number) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedIndex(index);
+            setTimeout(() => setCopiedIndex(null), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
         }
     };
 
@@ -228,9 +239,28 @@ export default function RoadTestPage() {
                                     </span>
                                     <div className="grid grid-cols-1 gap-6">
                                         {result.rewrites.map((rewrite, idx) => (
-                                            <div key={idx} className="bg-white p-8 rounded-2xl border border-[#3A5A5B]/10 hover:shadow-lg transition-shadow">
-                                                <div className="mb-4 inline-block px-3 py-1 bg-[#E1E6D8] rounded-full text-[10px] font-bold tracking-widest uppercase text-[#3A5A5B]">
-                                                    {rewrite.tone}
+                                            <div key={idx} className="bg-white p-8 rounded-2xl border border-[#3A5A5B]/10 hover:shadow-lg transition-shadow relative group">
+                                                <div className="mb-4 flex items-center justify-between">
+                                                    <span className="inline-block px-3 py-1 bg-[#E1E6D8] rounded-full text-[10px] font-bold tracking-widest uppercase text-[#3A5A5B]">
+                                                        {rewrite.tone}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => handleCopy(rewrite.text, idx)}
+                                                        className="p-2 rounded-lg hover:bg-[#F7F8F5] transition-colors flex items-center gap-2 text-xs font-medium text-[#3A5A5B]"
+                                                        title="Copy to clipboard"
+                                                    >
+                                                        {copiedIndex === idx ? (
+                                                            <>
+                                                                <Check className="w-4 h-4 text-green-600" />
+                                                                <span className="text-green-600">Copied!</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Copy className="w-4 h-4" />
+                                                                <span className="opacity-0 group-hover:opacity-100 transition-opacity">Copy</span>
+                                                            </>
+                                                        )}
+                                                    </button>
                                                 </div>
                                                 <p className="text-lg text-[#1F2F33] leading-relaxed font-medium">
                                                     "{rewrite.text}"

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ScenarioResponse } from "@/lib/types";
-import { ArrowLeft, Loader2, Sparkles, Octagon, Eye, ArrowRight } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Octagon, Eye, ArrowRight, Copy, Check } from "lucide-react";
 
 export default function ScenarioPage() {
     const [situation, setSituation] = useState("");
@@ -13,6 +13,7 @@ export default function ScenarioPage() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<ScenarioResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [copiedSection, setCopiedSection] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,6 +39,16 @@ export default function ScenarioPage() {
             setError("Network error. Please try again.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCopy = async (text: string, section: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedSection(section);
+            setTimeout(() => setCopiedSection(null), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
         }
     };
 
@@ -153,31 +164,70 @@ export default function ScenarioPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#3A5A5B]/10 border border-[#3A5A5B]/10 rounded-3xl overflow-hidden shadow-sm">
                                 {/* 1. The Mirror */}
-                                <div className="bg-[#F7F8F5] p-8 md:p-12 hover:bg-white transition-colors">
-                                    <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest mb-6">
-                                        The Mirror
-                                    </h3>
+                                <div className="bg-[#F7F8F5] p-8 md:p-12 hover:bg-white transition-colors relative group">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest">
+                                            The Mirror
+                                        </h3>
+                                        <button
+                                            onClick={() => handleCopy(result.mirror_text, 'mirror')}
+                                            className="p-2 rounded-lg hover:bg-[#E1E6D8] transition-colors flex items-center gap-2 text-xs font-medium text-[#3A5A5B]"
+                                            title="Copy to clipboard"
+                                        >
+                                            {copiedSection === 'mirror' ? (
+                                                <><Check className="w-4 h-4 text-green-600" /><span className="text-green-600">Copied!</span></>
+                                            ) : (
+                                                <><Copy className="w-4 h-4" /><span className="opacity-0 group-hover:opacity-100 transition-opacity">Copy</span></>
+                                            )}
+                                        </button>
+                                    </div>
                                     <p className="text-xl leading-relaxed text-[#1F2F33] font-serif italic">
                                         "{result.mirror_text}"
                                     </p>
                                 </div>
 
                                 {/* 2. The Prediction */}
-                                <div className="bg-[#E1E6D8]/30 p-8 md:p-12 hover:bg-[#E1E6D8]/50 transition-colors">
-                                    <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest mb-6">
-                                        The Projection
-                                    </h3>
+                                <div className="bg-[#E1E6D8]/30 p-8 md:p-12 hover:bg-[#E1E6D8]/50 transition-colors relative group">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest">
+                                            The Projection
+                                        </h3>
+                                        <button
+                                            onClick={() => handleCopy(result.prediction_text, 'prediction')}
+                                            className="p-2 rounded-lg hover:bg-[#F7F8F5] transition-colors flex items-center gap-2 text-xs font-medium text-[#3A5A5B]"
+                                            title="Copy to clipboard"
+                                        >
+                                            {copiedSection === 'prediction' ? (
+                                                <><Check className="w-4 h-4 text-green-600" /><span className="text-green-600">Copied!</span></>
+                                            ) : (
+                                                <><Copy className="w-4 h-4" /><span className="opacity-0 group-hover:opacity-100 transition-opacity">Copy</span></>
+                                            )}
+                                        </button>
+                                    </div>
                                     <p className="text-xl leading-relaxed text-[#3A5A5B] font-light">
                                         {result.prediction_text}
                                     </p>
                                 </div>
 
                                 {/* 3. The EmCo Move */}
-                                <div className="bg-[#1F2F33] p-8 md:p-12 md:col-span-2 text-[#F7F8F5]">
-                                    <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest mb-6 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-[#9FB3A1]"></span>
-                                        The Sovereign Move
-                                    </h3>
+                                <div className="bg-[#1F2F33] p-8 md:p-12 md:col-span-2 text-[#F7F8F5] relative group">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xs font-bold text-[#9FB3A1] uppercase tracking-widest flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-[#9FB3A1]"></span>
+                                            The Sovereign Move
+                                        </h3>
+                                        <button
+                                            onClick={() => handleCopy(result.emco_move, 'emco')}
+                                            className="p-2 rounded-lg hover:bg-[#3A5A5B] transition-colors flex items-center gap-2 text-xs font-medium text-[#F7F8F5]"
+                                            title="Copy to clipboard"
+                                        >
+                                            {copiedSection === 'emco' ? (
+                                                <><Check className="w-4 h-4 text-green-400" /><span className="text-green-400">Copied!</span></>
+                                            ) : (
+                                                <><Copy className="w-4 h-4" /><span className="opacity-0 group-hover:opacity-100 transition-opacity">Copy</span></>
+                                            )}
+                                        </button>
+                                    </div>
                                     <p className="text-2xl md:text-3xl font-light leading-relaxed">
                                         {result.emco_move}
                                     </p>
@@ -209,7 +259,7 @@ export default function ScenarioPage() {
                             <div className="flex justify-center pt-8">
                                 <button
                                     onClick={() => setResult(null)}
-              className="group relative px-8 py-4 bg-[#1F2F33] text-[#F7F8F5] text-sm font-medium tracking-widest uppercase transition-all hover:bg-[#3A5A5B] shadow-lg shadow-[#1F2F33]/10"
+                                    className="group relative px-8 py-4 bg-[#1F2F33] text-[#F7F8F5] text-sm font-medium tracking-widest uppercase transition-all hover:bg-[#3A5A5B] shadow-lg shadow-[#1F2F33]/10"
                                 >
                                     Analyze New Scenario
                                 </button>
