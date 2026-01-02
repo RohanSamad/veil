@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veil.local/schemas/scenario_analysis.schema.json",
+  "title": "VEIL Scenario Analysis Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mode",
+    "classification",
+    "pattern_identified",
+    "explanation",
+    "prediction",
+    "emco_move",
+    "micro_plan"
+  ],
+  "properties": {
+    "mode": { "const": "scenario_analysis" },
+    "trace_id": { "type": "string", "minLength": 8 },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detected_intensity", "detected_risk", "context_type", "pattern_type"],
+      "properties": {
+        "detected_intensity": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "detected_risk": { "enum": ["none", "escalation", "safety_concern"] },
+        "context_type": { "enum": ["silence", "conflict", "intimacy", "other"] },
+        "pattern_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "label": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quick_label", "pattern_tag"],
+      "properties": {
+        "quick_label": { "enum": ["Emoting", "Integrating", "EmCo"] },
+        "pattern_tag": { "type": "string", "minLength": 1 }
+      }
+    },
+    "pattern_identified": { "type": "string", "minLength": 1 },
+    "explanation": { "type": "string", "minLength": 1 },
+    "prediction": { "type": "string", "minLength": 1 },
+    "emco_move": { "type": "string", "minLength": 1 },
+    "micro_plan": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "coaching_question": { "type": "string" }
+  }
+}
+
+

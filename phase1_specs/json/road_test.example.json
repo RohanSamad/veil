@@ -1,0 +1,39 @@
+{
+  "mode": "road_test",
+  "trace_id": "rt_01HXYZ1234",
+  "classification": {
+    "user_intensity": 7,
+    "ai_intensity": 6,
+    "effective_intensity": 7,
+    "detected_urgency": "high",
+    "detected_risk": "escalation",
+    "context_type": "conflict",
+    "ambiguity": false,
+    "late_night": true
+  },
+  "verdict": {
+    "traffic_light": "rewrite",
+    "traffic_light_emoji": "🔴",
+    "rationale": "This reads reactive and blamey. Sending it now will probably trigger defensiveness and turn into a fight.",
+    "rule_trace": [
+      "risk == escalation -> REWRITE"
+    ]
+  },
+  "label": {
+    "quick_label": "Emoting",
+    "pattern_tag": "Reactive Escalation"
+  },
+  "coaching_question": "What outcome are you actually going for here — connection, clarity, or a reaction?",
+  "rewrites": [
+    {
+      "tone": "Neutral / Direct",
+      "text": "Hey. I’m still upset about earlier. Can we talk when you’ve got a minute? I want to understand your side."
+    },
+    {
+      "tone": "Warm / Vulnerable",
+      "text": "I’ve cooled down a bit. I’m more hurt than angry. Can we reset and talk properly?"
+    }
+  ]
+}
+
+

@@ -1,0 +1,48 @@
+flowchart TD
+    classDef input fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef ai fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef decision fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+    classDef output fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef stop fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+
+    Start([User Opens Scenario Analysis]):::input
+
+    subgraph User_Input ["Step 1: User Input"]
+        I1["What happened?<br>Short description"]:::input
+        I2["What are you feeling?<br>1-2 lines"]:::input
+        I3["What do you want to do?<br>Your intended move"]:::input
+    end
+
+    Start --> I1 --> I2 --> I3
+
+    subgraph AI_Classifier ["Step 2: AI Classifier - Automatic"]
+        direction TB
+        C1["Detect Intensity 1-10"]:::ai
+        C2["Detect Risk<br>None / Escalation / Safety"]:::ai
+        C3["Detect Pattern Type<br>Example: pursuit_withdrawal, boundary, mismatch"]:::ai
+        C4["Identify Context Type<br>Silence / Conflict / Intimacy / Other"]:::ai
+    end
+
+    I3 --> C1 --> C2 --> C3 --> C4
+
+    subgraph Policy_Check ["Step 3: Policy & Safety Check"]
+        P1{Safety Risk?}:::decision
+    end
+
+    C4 --> P1
+
+    P1 -- "Yes - Self-harm / Violence / DV" --> HardStop[HARD STOP<br>Stop normal flow + show crisis resources]:::stop
+
+    subgraph Generator ["Step 4: Generate Output"]
+        P1 -- No --> G1[Pattern + Mirror Explanation]:::ai
+        G1 --> G2["Prediction<br>If you do X -> likely Y"]:::ai
+        G2 --> G3["What would EmCo do?<br>1 steady alternative move"]:::ai
+        G3 --> G4["Micro-plan<br>3 bullets"]:::ai
+    end
+
+    subgraph Final_Output ["Final JSON Response"]
+        G4 --> OUT[Package JSON:<br>classification + label + explanation<br>prediction + emco_move + micro_plan]:::output
+    end
+
+    OUT --> End([Display to User]):::input
+

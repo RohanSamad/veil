@@ -1,0 +1,54 @@
+flowchart TD
+    classDef entry fill:#e3f2fd,stroke:#1565c0
+    classDef quiz fill:#fff3e0,stroke:#ef6c00
+    classDef pay fill:#fce4ec,stroke:#c2185b
+    classDef bot fill:#e8f5e9,stroke:#2e7d32
+    classDef action fill:#f3e5f5,stroke:#7b1fa2
+
+    subgraph Entry ["Stage 0-1: Entry & Engagement"]
+        A0[Social Media / Content]:::entry --> A1[DM Engagement]:::entry
+        A1 --> A2{Want to try the quiz?}:::entry
+    end
+
+    subgraph Quiz_Free ["Stage 2: Free Quiz - 6QS"]
+        A2 -- Yes --> B1["Personalization on-device<br>Name, Sex, Partner Term"]:::quiz
+        B1 --> B2[6 Questions]:::quiz
+        B2 --> B3[Basic Archetype Result Page]:::quiz
+        B3 --> B4{Go Deeper?}:::quiz
+    end
+
+    subgraph Quiz_Paid ["Stage 3: Paid Quiz - 20QS/30QS"]
+        B4 -- Yes --> C1[PAYWALL: One-time Purchase]:::pay
+        C1 --> C2[20/30 Questions]:::quiz
+        C2 --> C3[Rich Personalised Report]:::quiz
+        C3 --> C4{Access the Bot?}:::quiz
+    end
+
+    subgraph Segment ["Stage 4-5: Population Split + Hive-off - Quiet"]
+        direction TB
+        B3 --> S1["Quiet segmentation<br>quiz and behaviour"]:::quiz
+        C3 --> S1
+        S1 --> S2{Feeling-led cohort?}:::quiz
+        S2 -- Yes --> H1[Offer Emotional Coherence<br>sub-module]:::action
+        S2 -- No --> PREVIEW[Basic Bot It - Limited Access]:::bot
+        H1 --> PREVIEW
+    end
+
+    subgraph Bot_Access ["Stage 6: Full Bot Subscription - Optional Upgrade"]
+        PREVIEW --> U1{Upgrade for full Coherence Lab?}:::bot
+        U1 -- Yes --> D1[PAYWALL: Subscription]:::pay
+        D1 --> D2[Coherence Lab Access]:::bot
+        D2 --> D3{Select Mode}:::bot
+    end
+
+    subgraph Bot_Modes ["Bot Interaction Modes"]
+        D3 --> E1[Road-Test a Message]:::action
+        D3 --> E2[Scenario Analysis]:::action
+        D3 --> E3[Post-Move Debrief]:::action
+    end
+
+    B4 -- No --> PREVIEW
+    C4 -- Yes --> PREVIEW
+
+    B4 -- No --> EXIT1[Exit / Share Result]
+    C4 -- No --> EXIT2[Exit / Use Report]

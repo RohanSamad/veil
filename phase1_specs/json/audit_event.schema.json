@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veil.local/schemas/audit_event.schema.json",
+  "title": "VEIL Audit Event (Internal)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_name", "timestamp", "trace_id", "mode", "payload"],
+  "properties": {
+    "event_name": {
+      "enum": [
+        "road_test.requested",
+        "road_test.decided",
+        "scenario_analysis.requested",
+        "scenario_analysis.generated",
+        "debrief.requested",
+        "debrief.generated",
+        "error"
+      ]
+    },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "trace_id": { "type": "string", "minLength": 8 },
+    "user_ref": {
+      "description": "Non-PII reference (e.g., internal user_id or a one-way hash).",
+      "type": "string"
+    },
+    "mode": { "enum": ["road_test", "scenario_analysis", "debrief"] },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific payload. Keep raw text out of here by default."
+    }
+  }
+}
+
+

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veil.local/schemas/debrief.schema.json",
+  "title": "VEIL Post-Move Debrief Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mode",
+    "action_taken",
+    "outcome_reported",
+    "matched_prediction",
+    "validation",
+    "outcome_tag",
+    "lesson_learned",
+    "save_opt_in"
+  ],
+  "properties": {
+    "mode": { "const": "debrief" },
+    "trace_id": { "type": "string", "minLength": 8 },
+    "action_taken": { "enum": ["sent", "waited", "called", "other"] },
+    "outcome_reported": { "type": "string", "minLength": 1 },
+    "matched_prediction": { "enum": ["yes", "no", "not_sure"] },
+    "validation": { "type": "string", "minLength": 1 },
+    "outcome_tag": { "type": "string", "minLength": 1 },
+    "lesson_learned": { "type": "string", "minLength": 1 },
+    "next_step": { "type": "string" },
+    "save_opt_in": { "type": "boolean" }
+  }
+}
+
+

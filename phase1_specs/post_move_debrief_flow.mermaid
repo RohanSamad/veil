@@ -1,0 +1,46 @@
+flowchart TD
+    classDef input fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef ai fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef decision fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+    classDef output fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef stop fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+
+    Start([User Opens Post-Move Debrief]):::input
+
+    subgraph User_Input ["Step 1: User Input"]
+        I1["What did you do?<br>sent / waited / called / other"]:::input
+        I2["What happened?<br>their response / outcome"]:::input
+        I3["Did it match the prediction?<br>yes / no / not sure"]:::input
+    end
+
+    Start --> I1 --> I2 --> I3
+
+    subgraph AI_Classifier ["Step 2: Classifier - Automatic"]
+        direction TB
+        C1["Detect Outcome Type<br>Example: de-escalated, escalated, no_response"]:::ai
+        C2["Generate Outcome Tag"]:::ai
+        C3["Detect Risk<br>None / Safety"]:::ai
+    end
+
+    I3 --> C1 --> C2 --> C3
+
+    subgraph Policy_Check ["Step 3: Policy & Safety Check"]
+        P1{Safety Risk?}:::decision
+    end
+
+    C3 --> P1
+
+    P1 -- "Yes - Self-harm / Violence / DV" --> HardStop[HARD STOP<br>Stop normal flow + show crisis resources]:::stop
+
+    subgraph Generator ["Step 4: Generate Output"]
+        P1 -- No --> G1[Validation + Lesson]:::ai
+        G1 --> G2["Next Step<br>tiny, non-directive"]:::ai
+        G2 --> G3["Ask Opt-in<br>Save this scenario to improve coaching?"]:::ai
+    end
+
+    subgraph Final_Output ["Final JSON Response"]
+        G3 --> OUT[Package JSON:<br>action_taken + outcome_reported<br>matched_prediction + outcome_tag<br>validation + lesson_learned + next_step<br>save_opt_in]:::output
+    end
+
+    OUT --> End([Display to User]):::input
+

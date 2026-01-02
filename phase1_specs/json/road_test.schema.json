@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veil.local/schemas/road_test.schema.json",
+  "title": "VEIL Road-Test Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["mode", "classification", "verdict", "label"],
+  "properties": {
+    "mode": { "const": "road_test" },
+    "trace_id": { "type": "string", "minLength": 8 },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "user_intensity",
+        "ai_intensity",
+        "effective_intensity",
+        "detected_urgency",
+        "detected_risk",
+        "context_type",
+        "ambiguity",
+        "late_night"
+      ],
+      "properties": {
+        "user_intensity": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "ai_intensity": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "effective_intensity": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "detected_urgency": { "enum": ["low", "medium", "high"] },
+        "detected_risk": { "enum": ["none", "escalation", "safety_concern"] },
+        "context_type": { "enum": ["silence", "conflict", "intimacy", "other"] },
+        "ambiguity": { "type": "boolean" },
+        "late_night": { "type": "boolean" }
+      }
+    },
+    "verdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["traffic_light", "rationale"],
+      "properties": {
+        "traffic_light": { "enum": ["send", "wait", "rewrite", "hard_stop"] },
+        "traffic_light_emoji": { "enum": ["🟢", "🟡", "🔴", "⛔"] },
+        "rationale": { "type": "string", "minLength": 1 },
+        "rule_trace": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "label": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quick_label", "pattern_tag"],
+      "properties": {
+        "quick_label": { "enum": ["Emoting", "Integrating", "EmCo"] },
+        "pattern_tag": { "type": "string", "minLength": 1 }
+      }
+    },
+    "coaching_question": { "type": "string" },
+    "rewrites": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tone", "text"],
+        "properties": {
+          "tone": { "type": "string", "minLength": 1 },
+          "text": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
+
+

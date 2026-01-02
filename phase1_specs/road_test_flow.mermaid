@@ -1,0 +1,59 @@
+flowchart TD
+    classDef input fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef ai fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef decision fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+    classDef output fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef stop fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+
+    Start([User Opens Road-Test Mode]):::input
+
+    subgraph User_Input ["Step 1: User Input"]
+        I1[Paste Draft Message]:::input
+        I2[Provide Context<br>1-2 lines]:::input
+        I3[Rate Emotion Intensity<br>1-10]:::input
+    end
+
+    Start --> I1 --> I2 --> I3
+
+    subgraph AI_Classifier ["Step 2: AI Classifier (Automatic)"]
+        direction TB
+        C1["Analyze Message Text"]:::ai
+        C2["Infer Emotional Intensity (1-10)"]:::ai
+        C3["Detect Urgency (Low/Med/High)"]:::ai
+        C4["Detect Risk (None/Escalation/Safety)"]:::ai
+        C5["Identify Context Type<br>(Silence/Conflict/Intimacy)"]:::ai
+        C6["Flag Ambiguity (true/false)"]:::ai
+        C7["Flag Late-Night (true/false)<br>(e.g., 10pm-6am local)"]:::ai
+        C8["Compute Effective Intensity<br>max(user_intensity, ai_intensity)"]:::ai
+    end
+
+    I3 --> C1 --> C2 --> C3 --> C4 --> C5 --> C6 --> C7 --> C8
+
+    subgraph Policy_Check ["Step 3: Policy & Persona Wrapper"]
+        P1{Safety Risk?}:::decision
+    end
+
+    C8 --> P1
+
+    P1 -- "Yes (Self-harm/Violence/DV)" --> HardStop[⛔ HARD STOP<br>Stop normal flow + show crisis resources]:::stop
+
+    subgraph Decision_Logic ["Step 4: Traffic Light Decision (Deterministic Rules)"]
+        P1 -- No --> TL{Risk + Effective Intensity Check}:::decision
+        TL -- "risk == none<br>AND effective_intensity ≤ 4<br>AND ambiguity == false" --> GREEN[🟢 SEND]:::output
+        TL -- "risk == none<br>AND (effective_intensity 5-7<br>OR ambiguity == true<br>OR late_night == true)" --> YELLOW[🟡 WAIT]:::output
+        TL -- "risk == escalation<br>OR effective_intensity ≥ 8" --> RED[🔴 REWRITE]:::output
+    end
+
+    subgraph Generator ["Step 5: Generate Output"]
+        GREEN --> G1[Approval + Validation]:::ai
+        YELLOW --> G2[Pause Suggestion + Insight]:::ai
+        RED --> G3[Rewrite Options + Coaching Q]:::ai
+    end
+
+    subgraph Final_Output ["Final JSON Response"]
+        G1 --> OUT[Package JSON:<br>classification + traffic_light + rationale<br>quick_label + pattern_tag<br>rewrites + coaching_q]:::output
+        G2 --> OUT
+        G3 --> OUT
+    end
+
+    OUT --> End([Display to User]):::input

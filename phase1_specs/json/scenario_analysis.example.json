@@ -1,0 +1,26 @@
+{
+  "mode": "scenario_analysis",
+  "trace_id": "sa_01HXYZ5678",
+  "classification": {
+    "detected_intensity": 6,
+    "detected_risk": "none",
+    "context_type": "silence",
+    "pattern_type": "pursuit_withdrawal"
+  },
+  "label": {
+    "quick_label": "EmCo",
+    "pattern_tag": "Silence Anxiety"
+  },
+  "pattern_identified": "Pursuit–Withdrawal Loop",
+  "explanation": "You’re feeling disconnected, and your brain is trying to turn silence into certainty. The urge to “do something” is basically anxiety trying to get a reaction.",
+  "prediction": "If you push right now, they’ll likely pull back harder. The gap widens.",
+  "emco_move": "Do nothing for 12 hours. Stillness is the signal.",
+  "micro_plan": [
+    "Put your phone in another room for 60 minutes.",
+    "Do something physical to burn off the adrenaline (walk / gym / shower).",
+    "Tomorrow, if you still need contact, send one clean line — not a paragraph."
+  ],
+  "coaching_question": "What are you trying to get right now — reassurance, connection, or control?"
+}
+
+

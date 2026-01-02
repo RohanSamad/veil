@@ -1,0 +1,36 @@
+{
+  "event_name": "road_test.decided",
+  "timestamp": "2025-12-31T12:34:56Z",
+  "trace_id": "rt_01HXYZ1234",
+  "user_ref": "user_2f3a9c0d",
+  "mode": "road_test",
+  "payload": {
+    "input": {
+      "message_len": 238,
+      "context_len": 64,
+      "user_intensity": 7,
+      "late_night": true
+    },
+    "classification": {
+      "ai_intensity": 6,
+      "effective_intensity": 7,
+      "detected_urgency": "high",
+      "detected_risk": "escalation",
+      "context_type": "conflict",
+      "ambiguity": false
+    },
+    "decision": {
+      "traffic_light": "rewrite",
+      "rule_trace": [
+        "risk == escalation -> REWRITE"
+      ]
+    },
+    "versions": {
+      "prompt_version": "phase1-v1",
+      "schema_version": "road_test-1.0",
+      "model": "gpt-4.1-mini"
+    }
+  }
+}
+
+
